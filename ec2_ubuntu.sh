@@ -17,7 +17,7 @@ do
     sleep 1
 done
 sudo apt -y install git screen watchdog
-until git clone https://github.com/WPO-Foundation/wptagent.git
+until git clone https://github.com/rposbo/wptagent.git
 do
     sleep 1
 done
