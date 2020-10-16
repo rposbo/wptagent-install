@@ -3,23 +3,25 @@
 # Prompt for the configuration options
 echo "Automatic agent install and configuration."
 echo
-
-PS3='Select agent testing mode: '
-options=("Android" "iOS" "Desktop")
-select AGENT_MODE in "${options[@]}"
+while [[ $AGENT_MODE == '' ]]
 do
-    case $AGENT_MODE in
-        "Android")
-            break
-            ;;
-        "iOS")
-            break
-            ;;
-        "Desktop")
-            break
-            ;;
-        *) echo "invalid option $REPLY";;
-    esac
+  PS3='Select agent testing mode: '
+  options=("Android" "iOS" "Desktop")
+  select AGENT_MODE in "${options[@]}"
+  do
+      case $AGENT_MODE in
+          "Android")
+              break
+              ;;
+          "iOS")
+              break
+              ;;
+          "Desktop")
+              break
+              ;;
+          *) echo "invalid option $REPLY";;
+      esac
+  done
 done
 
 read -e -p "Disable IPv6 (recommended unless IPv6 connectivity is available) (Y/n): " -i "y" DISABLE_IPV6
@@ -31,8 +33,12 @@ while [[ $WPT_LOCATION == '' ]]
 do
   read -p "Location ID (i.e. Dulles): " WPT_LOCATION
 done
-read -p "Location Key (if required): " WPT_KEY
-read -p "Device Name (optional): " WPT_DEVICE_NAME
+if [[ $WPT_KEY == '' ]] then
+  read -p "Location Key (if required): " WPT_KEY
+fi
+if [[ $WPT_DEVICE_NAME == '' ]] then
+  read -p "Device Name (optional): " WPT_DEVICE_NAME
+fi
 
 # Pre-prompt for the sudo authorization so it doesn't prompt later
 sudo date
