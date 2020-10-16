@@ -67,7 +67,7 @@ until sudo DEBIAN_FRONTEND=noninteractive apt -yq -o Dpkg::Options::="--force-co
 do
     sleep 1
 done
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 echo ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true | sudo debconf-set-selections
 until sudo DEBIAN_FRONTEND=noninteractive apt install -yq git screen watchdog \
 libtiff5-dev libjpeg-dev zlib1g-dev libfreetype6-dev liblcms2-dev libwebp-dev tcl8.6-dev tk8.6-dev python-tk python2.7 python-pip \
@@ -97,7 +97,7 @@ if [ "${AGENT_MODE,,}" == 'desktop' ]; then
 fi
 
 # Set up python
-until sudo pip install dnspython monotonic pillow psutil pyssim requests ujson tornado wsaccel xvfbwrapper brotli fonttools marionette_driver
+until sudo pip install dnspython monotonic pillow psutil pyssim requests git+git://github.com/marshallpierce/ultrajson.git@v1.35-gentoo-fixes tornado wsaccel xvfbwrapper brotli 'fonttools>=3.44.0,<4.0.0' marionette_driver usbmuxwrapper
 do
     sleep 1
 done
@@ -121,6 +121,10 @@ rm -rf ffmpeg
 
 # iOS support
 if [ "${AGENT_MODE,,}" == 'ios' ]; then
+  until sudo pip install usbmuxwrapper
+  do
+      sleep 1
+  done
   until sudo DEBIAN_FRONTEND=noninteractive apt -yq install build-essential \
   cmake python-dev cython swig automake autoconf libtool libusb-1.0-0 libusb-1.0-0-dev \
   libreadline-dev openssl libssl1.0.2 libssl1.1 libssl-dev
@@ -310,7 +314,7 @@ if [ "${AGENT_MODE,,}" == 'ios' ]; then
   echo "    python wptagent.py -vvvv $NAME_OPTION --location $WPT_LOCATION $KEY_OPTION --server \"http://$WPT_SERVER/work/\" --iOS --exit 60 --alive /tmp/wptagent" >> ~/agent.sh
 fi
 if [ "${AGENT_MODE,,}" == 'desktop' ]; then
-  echo "    python wptagent.py -vvvv $NAME_OPTION --location $WPT_LOCATION $KEY_OPTION --server \"http://$WPT_SERVER/work/\" --exit 60 --alive /tmp/wptagent" >> ~/agent.sh
+  echo "    python wptagent.py -vvvv $NAME_OPTION --location $WPT_LOCATION $KEY_OPTION --server \"http://$WPT_SERVER/work/\" --xvfb --exit 60 --alive /tmp/wptagent" >> ~/agent.sh
 fi
 echo '    echo "Exited, restarting"' >> ~/agent.sh
 echo '    sleep 1' >> ~/agent.sh
